@@ -1,4 +1,4 @@
-(function () {
+(function (root) {
   function asArray(value) {
     if (!value) return [];
     return Array.isArray(value) ? value : [value];
@@ -59,8 +59,8 @@
     }
   }
 
-  window.VlooSpaceSignals = {
+  root.VlooSpaceSignals = {
     getPublicSpaceTags,
     renderSpaceSignalTags,
   };
-})();
+})(typeof window !== "undefined" ? window : globalThis);
