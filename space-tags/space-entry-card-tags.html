@@ -96,6 +96,115 @@
         width: 100%;
       }
 
+      .space-slider {
+        position: relative;
+        margin-top: 34px;
+      }
+
+      .slider-viewport {
+        overflow: hidden;
+      }
+
+      .slider-track {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 100%;
+        transition: transform 260ms ease;
+      }
+
+      .slider-page {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        padding: 0 1px;
+      }
+
+      .slider-card .card-body {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        padding-top: 22px;
+      }
+
+      .slider-card .card-title {
+        margin-bottom: 8px;
+        font-size: 23px;
+      }
+
+      .slider-card .address {
+        margin-bottom: 14px;
+        font-size: 14px;
+      }
+
+      .slider-card .actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 0;
+      }
+
+      .slider-card .stars {
+        font-size: 22px;
+      }
+
+      .slider-card .book {
+        min-width: 86px;
+        min-height: 42px;
+        font-size: 15px;
+      }
+
+      .slider-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 28px;
+      }
+
+      .slider-button {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border: 1px solid rgba(8, 127, 157, 0.24);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .slider-button:hover {
+        border-color: rgba(8, 127, 157, 0.42);
+        background: #f5fbfe;
+      }
+
+      .slider-button svg {
+        width: 20px;
+        height: 20px;
+        stroke-width: 2.2;
+      }
+
+      .slider-dots {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .slider-dot {
+        width: 9px;
+        height: 9px;
+        border: 0;
+        border-radius: 999px;
+        background: #c8dce5;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .slider-dot.active {
+        width: 28px;
+        background: var(--brand);
+      }
+
       .image-wrap {
         position: relative;
         overflow: hidden;
@@ -287,7 +396,10 @@
 
         .city-block { margin-bottom: 48px; }
 
-        .listing-head h2 { font-size: 40px; }
+        .listing-head h2 {
+          font-size: 34px;
+          line-height: 1.08;
+        }
         .listing-head p, .city-block p { font-size: 20px; }
 
         .card-body {
@@ -300,6 +412,40 @@
           grid-template-columns: 1fr auto;
           justify-items: start;
           align-items: center;
+        }
+
+        .space-slider {
+          margin-inline: -16px;
+        }
+
+        .slider-viewport {
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-padding-inline: 16px;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .slider-viewport::-webkit-scrollbar { display: none; }
+
+        .slider-track {
+          display: flex;
+          gap: 16px;
+          padding-inline: 16px;
+          transition: none;
+          transform: none !important;
+        }
+
+        .slider-page {
+          display: contents;
+        }
+
+        .slider-card {
+          flex: 0 0 min(82vw, 340px);
+          scroll-snap-align: start;
+        }
+
+        .slider-controls {
+          display: none;
         }
 
         .stars { font-size: 26px; }
@@ -336,41 +482,158 @@
         <p>Recommended based on where you live.</p>
       </section>
 
-      <article class="space-card" aria-label="Uppercase and Friends listing">
-        <div class="image-wrap">
-          <img src="assets/space-entry-reference.jpg" alt="Office listing image" />
-          <span class="city-badge">Oslo</span>
-          <span class="favorite" aria-hidden="true">
-            <svg viewBox="0 0 32 30" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M16 27S4 19.6 4 11.4C4 7.5 7.1 5 10.5 5c2.3 0 4.3 1.2 5.5 3.1C17.2 6.2 19.2 5 21.5 5 24.9 5 28 7.5 28 11.4 28 19.6 16 27 16 27Z"/>
+      <section class="space-slider" aria-label="Space recommendations">
+        <div class="slider-viewport">
+          <div class="slider-track">
+            <div class="slider-page">
+              <article class="space-card slider-card" aria-label="Uppercase and Friends listing">
+                <div class="image-wrap">
+                  <img src="assets/space-entry-reference.jpg" data-base64-src="assets/space-entry-reference.jpg.b64" alt="Office listing image" />
+                  <span class="city-badge">Oslo</span>
+                  <span class="favorite" aria-hidden="true">
+                    <svg viewBox="0 0 32 30" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 27S4 19.6 4 11.4C4 7.5 7.1 5 10.5 5c2.3 0 4.3 1.2 5.5 3.1C17.2 6.2 19.2 5 21.5 5 24.9 5 28 7.5 28 11.4 28 19.6 16 27 16 27Z"/>
+                    </svg>
+                  </span>
+                </div>
+
+                <div class="card-body">
+                  <div>
+                    <h3 class="card-title">Uppercase &amp; Friends</h3>
+                    <p class="address">
+                      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="M10 18s5.5-5.4 5.5-10A5.5 5.5 0 0 0 4.5 8c0 4.6 5.5 10 5.5 10Z"/>
+                        <circle cx="10" cy="8" r="2.1"/>
+                      </svg>
+                      Drammensveien 130, Oslo
+                    </p>
+                    <div class="space-tags" data-space-tags-limit="3" aria-label="Workspace signals"></div>
+                  </div>
+
+                  <div class="actions">
+                    <div class="stars" aria-label="No rating yet">☆ ☆ ☆ ☆ ☆</div>
+                    <button class="book" type="button">Book</button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="space-card slider-card" aria-label="Skoyen Studio listing">
+                <div class="image-wrap">
+                  <img src="assets/object-page-reference.jpg" data-base64-src="assets/object-page-reference.jpg.b64" alt="Bright shared workspace" />
+                  <span class="city-badge">Oslo</span>
+                  <span class="favorite" aria-hidden="true">
+                    <svg viewBox="0 0 32 30" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 27S4 19.6 4 11.4C4 7.5 7.1 5 10.5 5c2.3 0 4.3 1.2 5.5 3.1C17.2 6.2 19.2 5 21.5 5 24.9 5 28 7.5 28 11.4 28 19.6 16 27 16 27Z"/>
+                    </svg>
+                  </span>
+                </div>
+
+                <div class="card-body">
+                  <div>
+                    <h3 class="card-title">Skoyen Studio</h3>
+                    <p class="address">
+                      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="M10 18s5.5-5.4 5.5-10A5.5 5.5 0 0 0 4.5 8c0 4.6 5.5 10 5.5 10Z"/>
+                        <circle cx="10" cy="8" r="2.1"/>
+                      </svg>
+                      Karenslyst alle 8, Oslo
+                    </p>
+                    <div class="space-tags" data-space-tags-limit="3" aria-label="Workspace signals"></div>
+                  </div>
+
+                  <div class="actions">
+                    <div class="stars" aria-label="No rating yet">☆ ☆ ☆ ☆ ☆</div>
+                    <button class="book" type="button">Book</button>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="slider-page">
+              <article class="space-card slider-card" aria-label="Fjord Focus listing">
+                <div class="image-wrap">
+                  <img src="assets/space-entry-reference.jpg" data-base64-src="assets/space-entry-reference.jpg.b64" alt="Office lounge listing image" />
+                  <span class="city-badge">Oslo</span>
+                  <span class="favorite" aria-hidden="true">
+                    <svg viewBox="0 0 32 30" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 27S4 19.6 4 11.4C4 7.5 7.1 5 10.5 5c2.3 0 4.3 1.2 5.5 3.1C17.2 6.2 19.2 5 21.5 5 24.9 5 28 7.5 28 11.4 28 19.6 16 27 16 27Z"/>
+                    </svg>
+                  </span>
+                </div>
+
+                <div class="card-body">
+                  <div>
+                    <h3 class="card-title">Fjord Focus</h3>
+                    <p class="address">
+                      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="M10 18s5.5-5.4 5.5-10A5.5 5.5 0 0 0 4.5 8c0 4.6 5.5 10 5.5 10Z"/>
+                        <circle cx="10" cy="8" r="2.1"/>
+                      </svg>
+                      Munkedamsveien 45, Oslo
+                    </p>
+                    <div class="space-tags" data-space-tags-limit="3" aria-label="Workspace signals"></div>
+                  </div>
+
+                  <div class="actions">
+                    <div class="stars" aria-label="No rating yet">☆ ☆ ☆ ☆ ☆</div>
+                    <button class="book" type="button">Book</button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="space-card slider-card" aria-label="Central Desk listing">
+                <div class="image-wrap">
+                  <img src="assets/object-page-reference.jpg" data-base64-src="assets/object-page-reference.jpg.b64" alt="Office atrium listing image" />
+                  <span class="city-badge">Oslo</span>
+                  <span class="favorite" aria-hidden="true">
+                    <svg viewBox="0 0 32 30" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 27S4 19.6 4 11.4C4 7.5 7.1 5 10.5 5c2.3 0 4.3 1.2 5.5 3.1C17.2 6.2 19.2 5 21.5 5 24.9 5 28 7.5 28 11.4 28 19.6 16 27 16 27Z"/>
+                    </svg>
+                  </span>
+                </div>
+
+                <div class="card-body">
+                  <div>
+                    <h3 class="card-title">Central Desk</h3>
+                    <p class="address">
+                      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="M10 18s5.5-5.4 5.5-10A5.5 5.5 0 0 0 4.5 8c0 4.6 5.5 10 5.5 10Z"/>
+                        <circle cx="10" cy="8" r="2.1"/>
+                      </svg>
+                      Universitetsgata 2, Oslo
+                    </p>
+                    <div class="space-tags" data-space-tags-limit="3" aria-label="Workspace signals"></div>
+                  </div>
+
+                  <div class="actions">
+                    <div class="stars" aria-label="No rating yet">☆ ☆ ☆ ☆ ☆</div>
+                    <button class="book" type="button">Book</button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="slider-controls" aria-label="Space slider controls">
+          <button class="slider-button" type="button" data-slider-prev aria-label="Previous spaces">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m15 18-6-6 6-6"/>
             </svg>
-          </span>
+          </button>
+          <div class="slider-dots" aria-label="Space slider pages"></div>
+          <button class="slider-button" type="button" data-slider-next aria-label="Next spaces">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
         </div>
-
-        <div class="card-body">
-          <div>
-            <h3 class="card-title">Uppercase &amp; Friends</h3>
-            <p class="address">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                <path d="M10 18s5.5-5.4 5.5-10A5.5 5.5 0 0 0 4.5 8c0 4.6 5.5 10 5.5 10Z"/>
-                <circle cx="10" cy="8" r="2.1"/>
-              </svg>
-              Drammensveien 130, Oslo
-            </p>
-            <div class="space-tags" data-space-tags-limit="3" aria-label="Workspace signals"></div>
-          </div>
-
-          <div class="actions">
-            <div class="stars" aria-label="No rating yet">☆ ☆ ☆ ☆ ☆</div>
-            <button class="book" type="button">Book</button>
-          </div>
-        </div>
-      </article>
+      </section>
 
       <section class="comparison" aria-labelledby="compact-title">
         <h2 id="compact-title">More compact variant</h2>
         <article class="compact-card" aria-label="Compact listing variant">
-          <img src="assets/space-entry-reference.jpg" alt="Office preview" />
+          <img src="assets/space-entry-reference.jpg" data-base64-src="assets/space-entry-reference.jpg.b64" alt="Office preview" />
           <div>
             <h3>Uppercase &amp; Friends</h3>
             <p class="address">Drammensveien 130, Oslo</p>
@@ -396,6 +659,54 @@
         const limit = Number(root.dataset.spaceTagsLimit);
         const tags = window.VlooSpaceSignals.getPublicSpaceTags(uppercaseSignals, { limit });
         window.VlooSpaceSignals.renderSpaceSignalTags(root, tags);
+      });
+
+      const slider = document.querySelector(".space-slider");
+      const sliderTrack = slider.querySelector(".slider-track");
+      const sliderPages = [...slider.querySelectorAll(".slider-page")];
+      const sliderDots = slider.querySelector(".slider-dots");
+      let currentPage = 0;
+
+      function renderSlider() {
+        sliderTrack.style.transform = `translateX(-${currentPage * 100}%)`;
+        sliderDots.querySelectorAll(".slider-dot").forEach((dot, index) => {
+          dot.classList.toggle("active", index === currentPage);
+          dot.setAttribute("aria-current", index === currentPage ? "true" : "false");
+        });
+      }
+
+      sliderPages.forEach((_, index) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "slider-dot";
+        dot.setAttribute("aria-label", `Show space group ${index + 1}`);
+        dot.addEventListener("click", () => {
+          currentPage = index;
+          renderSlider();
+        });
+        sliderDots.appendChild(dot);
+      });
+
+      slider.querySelector("[data-slider-prev]").addEventListener("click", () => {
+        currentPage = (currentPage - 1 + sliderPages.length) % sliderPages.length;
+        renderSlider();
+      });
+
+      slider.querySelector("[data-slider-next]").addEventListener("click", () => {
+        currentPage = (currentPage + 1) % sliderPages.length;
+        renderSlider();
+      });
+
+      renderSlider();
+
+      document.querySelectorAll("img[data-base64-src]").forEach(async (image) => {
+        try {
+          const response = await fetch(image.dataset.base64Src);
+          if (!response.ok) return;
+          image.src = `data:image/jpeg;base64,${(await response.text()).trim()}`;
+        } catch (error) {
+          // Keep the regular JPG src when the sidecar asset is unavailable locally.
+        }
       });
     </script>
   </body>
