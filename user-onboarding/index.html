@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VLOO — User privacy onboarding</title>
+  <style>
+    :root {
+      --navy: #072c3d;
+      --navy-2: #0b3548;
+      --panel: #0d3a4d;
+      --teal: #10a2be;
+      --teal-light: #9ee9f1;
+      --ink: #102f3b;
+      --muted: #c3d2d8;
+      --line: rgba(255,255,255,.18);
+      --white: #fff;
+      --focus: #f7d866;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 82% 8%, rgba(16,162,190,.22), transparent 30rem),
+        linear-gradient(145deg, #062534, var(--navy));
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input { font: inherit; }
+    button:focus-visible, input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+    .portal {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+    }
+    .side {
+      padding: 28px 22px;
+      border-right: 1px solid rgba(255,255,255,.08);
+      background: rgba(2,26,37,.58);
+    }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.08em; }
+    .brand-mark { width:34px; height:34px; border-radius:10px; background:var(--teal); display:grid; place-items:center; }
+    .nav-skeleton { margin-top: 46px; display:grid; gap:20px; opacity:.34; }
+    .nav-skeleton span { display:block; height:12px; border-radius:10px; background:#b9d0d8; }
+    .nav-skeleton span:nth-child(2n) { width:74%; }
+    .workspace { padding: 30px; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; }
+    .topbar h1 { margin:0; font-size:20px; }
+    .avatar { width:42px; height:42px; border-radius:50%; background:#d8f3f6; color:var(--ink); display:grid; place-items:center; font-weight:800; }
+    .backdrop { position:fixed; inset:0; padding:28px; display:grid; place-items:center; background:rgba(0,17,25,.66); backdrop-filter:blur(8px); }
+    .modal {
+      width:min(940px, 100%);
+      min-height:630px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:24px;
+      overflow:hidden;
+      background:linear-gradient(160deg, #0c394c, #082d3f);
+      box-shadow:0 36px 90px rgba(0,0,0,.36);
+    }
+    .modal-grid { min-height:630px; display:grid; grid-template-columns: 280px 1fr; }
+    .journey { padding:38px 32px; background:rgba(2,29,41,.45); border-right:1px solid var(--line); }
+    .eyebrow { margin:0 0 9px; color:var(--teal-light); font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    .journey h2 { margin:0; font-size:25px; line-height:1.15; }
+    .journey-copy { margin:12px 0 36px; color:var(--muted); font-size:14px; line-height:1.55; }
+    .steps { display:grid; gap:5px; }
+    .step { position:relative; display:grid; grid-template-columns:36px 1fr; gap:12px; align-items:start; padding:10px 0 24px; color:#92aab4; }
+    .step:not(:last-child)::after { content:""; position:absolute; left:17px; top:46px; bottom:-6px; width:2px; background:rgba(255,255,255,.15); }
+    .step-dot { width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,.2); display:grid; place-items:center; font-size:13px; font-weight:800; }
+    .step strong { display:block; margin:2px 0 3px; color:inherit; font-size:14px; }
+    .step small { font-size:12px; line-height:1.35; }
+    .step.active { color:var(--white); }
+    .step.active .step-dot { color:#062b3b; border-color:var(--teal-light); background:var(--teal-light); box-shadow:0 0 0 5px rgba(158,233,241,.1); }
+    .step.complete .step-dot { color:#fff; border-color:var(--teal); background:var(--teal); }
+    .content { position:relative; display:flex; flex-direction:column; padding:46px 54px 34px; }
+    .screen { display:none; animation:fade .24s ease; }
+    .screen.active { display:block; }
+    @keyframes fade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+    .icon { width:48px; height:48px; margin-bottom:22px; border-radius:15px; background:rgba(158,233,241,.12); color:var(--teal-light); display:grid; place-items:center; font-size:24px; }
+    .content h3 { margin:0 0 12px; font-size:32px; line-height:1.15; letter-spacing:-.02em; }
+    .lead { max-width:610px; margin:0 0 26px; color:#d7e3e7; line-height:1.65; }
+    .assurance { display:grid; gap:13px; padding:20px; border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.035); }
+    .check { display:flex; gap:12px; align-items:flex-start; color:#edf7f8; font-size:14px; line-height:1.45; }
+    .check b { flex:0 0 auto; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; color:#062b3b; background:var(--teal-light); font-size:12px; }
+    .required-list, .choice-list { display:grid; gap:12px; }
+    .required-card, .choice-card { padding:17px 18px; border:1px solid var(--line); border-radius:15px; background:rgba(255,255,255,.035); }
+    .required-card { display:grid; grid-template-columns:38px 1fr auto; gap:13px; align-items:center; }
+    .required-card .mini-icon { width:38px; height:38px; border-radius:11px; background:rgba(158,233,241,.12); display:grid; place-items:center; }
+    .required-card strong, .choice-copy strong { display:block; margin-bottom:3px; font-size:15px; }
+    .required-card p, .choice-copy p { margin:0; color:var(--muted); font-size:13px; line-height:1.45; }
+    .status { padding:5px 9px; border-radius:999px; color:#bdf5dc; background:rgba(46,187,131,.14); font-size:11px; font-weight:800; }
+    .micro { margin:15px 0 0; color:#9fb5bd; font-size:12px; }
+    .choice-card { display:flex; justify-content:space-between; align-items:center; gap:20px; cursor:pointer; }
+    .switch { position:relative; flex:0 0 auto; width:48px; height:28px; }
+    .switch input { position:absolute; opacity:0; }
+    .track { position:absolute; inset:0; border-radius:999px; background:#6e8791; transition:.2s; }
+    .track::after { content:""; position:absolute; width:22px; height:22px; left:3px; top:3px; border-radius:50%; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,.25); transition:.2s; }
+    .switch input:checked + .track { background:var(--teal); }
+    .switch input:checked + .track::after { transform:translateX(20px); }
+    .radio-card { display:grid; grid-template-columns:24px 1fr; gap:12px; padding:17px; border:1px solid var(--line); border-radius:15px; background:rgba(255,255,255,.035); cursor:pointer; }
+    .radio-card:has(input:checked) { border-color:var(--teal-light); background:rgba(158,233,241,.08); }
+    .radio-card input { width:18px; height:18px; margin-top:2px; accent-color:var(--teal); }
+    .footer { margin-top:auto; padding-top:28px; display:flex; justify-content:space-between; align-items:center; gap:18px; }
+    .privacy-link { border:0; padding:0; color:#c3edf2; background:transparent; text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+    .actions { display:flex; gap:10px; }
+    .btn { min-width:100px; min-height:44px; padding:10px 18px; border-radius:12px; border:1px solid rgba(255,255,255,.25); color:#fff; background:transparent; font-weight:750; cursor:pointer; }
+    .btn.primary { border-color:#fff; color:var(--ink); background:#fff; }
+    .btn:disabled { opacity:.4; cursor:not-allowed; }
+    .summary { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; }
+    .summary div { padding:12px; border-radius:12px; background:rgba(255,255,255,.055); }
+    .summary span { display:block; color:var(--muted); font-size:11px; }
+    .summary strong { display:block; margin-top:4px; font-size:13px; }
+    .notice { min-height:22px; margin:12px 0 0; color:#bdf5dc; font-size:13px; }
+    @media (max-width:760px) {
+      .portal { grid-template-columns:1fr; }
+      .side { display:none; }
+      .workspace { padding:20px; }
+      .backdrop { padding:0; align-items:end; }
+      .modal { max-height:96vh; overflow:auto; border-radius:24px 24px 0 0; }
+      .modal-grid { display:block; min-height:auto; }
+      .journey { padding:22px 22px 12px; border-right:0; border-bottom:1px solid var(--line); }
+      .journey h2, .journey-copy, .step small { display:none; }
+      .eyebrow { margin-bottom:16px; }
+      .steps { grid-template-columns:repeat(4,1fr); gap:8px; }
+      .step { display:block; padding:0; text-align:center; }
+      .step:not(:last-child)::after { left:calc(50% + 18px); right:calc(-50% + 18px); top:17px; bottom:auto; width:auto; height:2px; }
+      .step-dot { margin:auto; }
+      .step strong { font-size:11px; }
+      .content { min-height:570px; padding:30px 22px 24px; }
+      .content h3 { font-size:27px; }
+      .required-card { grid-template-columns:38px 1fr; }
+      .status { grid-column:2; justify-self:start; }
+      .footer { align-items:flex-end; }
+      .privacy-link { max-width:120px; text-align:left; }
+      .summary { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="portal">
+    <aside class="side" aria-hidden="true">
+      <div class="brand"><span class="brand-mark">V</span> VLOO</div>
+      <div class="nav-skeleton"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    </aside>
+    <section class="workspace" aria-hidden="true">
+      <header class="topbar"><h1>My portal</h1><span class="avatar">AM</span></header>
+    </section>
+  </main>
+
+  <div class="backdrop">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="screen-title">
+      <div class="modal-grid">
+        <aside class="journey">
+          <p class="eyebrow">Welcome to VLOO</p>
+          <h2>Set your privacy preferences</h2>
+          <p class="journey-copy">A quick, transparent setup. You can change every optional choice later.</p>
+          <nav class="steps" aria-label="Onboarding progress">
+            <div class="step active" data-step-indicator="1"><span class="step-dot">1</span><div><strong>Overview</strong><small>How privacy works</small></div></div>
+            <div class="step" data-step-indicator="2"><span class="step-dot">2</span><div><strong>Essentials</strong><small>Required for VLOO</small></div></div>
+            <div class="step" data-step-indicator="3"><span class="step-dot">3</span><div><strong>Your choices</strong><small>Optional preferences</small></div></div>
+            <div class="step" data-step-indicator="4"><span class="step-dot">4</span><div><strong>Visibility</strong><small>Choose what others see</small></div></div>
+          </nav>
+        </aside>
+
+        <div class="content">
+          <div class="screen active" data-screen="1">
+            <div class="icon" aria-hidden="true">⌁</div>
+            <h3 id="screen-title">Your privacy at VLOO</h3>
+            <p class="lead">We use a small amount of information to show relevant spaces, enable bookings and handle payments. You decide how optional information is used.</p>
+            <div class="assurance">
+              <div class="check"><b>✓</b><span>Decide what other users can see.</span></div>
+              <div class="check"><b>✓</b><span>Choose whether to receive updates and promotions.</span></div>
+              <div class="check"><b>✓</b><span>Turn personalized recommendations on or off anytime.</span></div>
+              <div class="check"><b>✓</b><span>We never sell your data.</span></div>
+            </div>
+          </div>
+
+          <div class="screen" data-screen="2">
+            <div class="icon" aria-hidden="true">✓</div>
+            <h3>Used to make VLOO work</h3>
+            <p class="lead">These essentials are enabled as part of providing the service. They are explained here—not presented as optional consent.</p>
+            <div class="required-list">
+              <div class="required-card"><span class="mini-icon">◉</span><div><strong>Profile name &amp; image</strong><p>Builds trust and enables bookings with hosts.</p></div><span class="status">Enabled</span></div>
+              <div class="required-card"><span class="mini-icon">⌖</span><div><strong>Location at city level</strong><p>Shows relevant workspaces near you. No precise GPS tracking.</p></div><span class="status">Enabled</span></div>
+              <div class="required-card"><span class="mini-icon">▣</span><div><strong>Bookings &amp; payments</strong><p>Required to manage bookings, payments and platform services.</p></div><span class="status">Enabled</span></div>
+            </div>
+            <p class="micro">Required to make VLOO work. Visibility can be adjusted separately.</p>
+          </div>
+
+          <div class="screen" data-screen="3">
+            <div class="icon" aria-hidden="true">◌</div>
+            <h3>Choose what works for you</h3>
+            <p class="lead">These preferences are optional and off by default. Switch on only what you want.</p>
+            <div class="choice-list">
+              <label class="choice-card"><span class="choice-copy"><strong>Personalized recommendations</strong><p>Get workspace suggestions based on how you use VLOO.</p></span><span class="switch"><input type="checkbox" id="personalized" /><span class="track"></span></span></label>
+              <label class="choice-card"><span class="choice-copy"><strong>Updates &amp; promotions</strong><p>Receive occasional product updates and relevant offers.</p></span><span class="switch"><input type="checkbox" id="updates" /><span class="track"></span></span></label>
+              <label class="choice-card"><span class="choice-copy"><strong>Name and image in marketing</strong><p>Allow use in testimonials or case studies. You can withdraw permission anytime.</p></span><span class="switch"><input type="checkbox" id="marketing" /><span class="track"></span></span></label>
+            </div>
+          </div>
+
+          <div class="screen" data-screen="4">
+            <div class="icon" aria-hidden="true">◉</div>
+            <h3>Choose your profile visibility</h3>
+            <p class="lead">Select what other VLOO users can see. Your email address and phone number remain hidden.</p>
+            <div class="choice-list">
+              <label class="radio-card"><input type="radio" name="visibility" value="visible" checked /><span class="choice-copy"><strong>Visible to other users <span class="status">Recommended</span></strong><p>Show your name, profile image, professional information and city-level location.</p></span></label>
+              <label class="radio-card"><input type="radio" name="visibility" value="limited" /><span class="choice-copy"><strong>Limited visibility</strong><p>Only show the minimum information needed for bookings.</p></span></label>
+            </div>
+            <div class="summary" aria-live="polite">
+              <div><span>Personalized recommendations</span><strong id="summary-personalized">Off</strong></div>
+              <div><span>Updates &amp; promotions</span><strong id="summary-updates">Off</strong></div>
+              <div><span>Marketing permission</span><strong id="summary-marketing">Off</strong></div>
+              <div><span>Contact details</span><strong>Hidden</strong></div>
+            </div>
+            <p class="notice" id="saved-message"></p>
+          </div>
+
+          <footer class="footer">
+            <button class="privacy-link" type="button" id="policy-button">Read Privacy Policy</button>
+            <div class="actions">
+              <button class="btn" type="button" id="back-button" disabled>Back</button>
+              <button class="btn primary" type="button" id="continue-button">Continue</button>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    let activeStep = 1;
+    const totalSteps = 4;
+    const title = document.getElementById("screen-title");
+    const back = document.getElementById("back-button");
+    const next = document.getElementById("continue-button");
+
+    function updateSummary() {
+      ["personalized", "updates", "marketing"].forEach((id) => {
+        document.getElementById(`summary-${id}`).textContent = document.getElementById(id).checked ? "On" : "Off";
+      });
+    }
+
+    function renderStep() {
+      document.querySelectorAll("[data-screen]").forEach((screen) => screen.classList.toggle("active", Number(screen.dataset.screen) === activeStep));
+      document.querySelectorAll("[data-step-indicator]").forEach((item) => {
+        const step = Number(item.dataset.stepIndicator);
+        item.classList.toggle("active", step === activeStep);
+        item.classList.toggle("complete", step < activeStep);
+        item.querySelector(".step-dot").textContent = step < activeStep ? "✓" : String(step);
+      });
+      const heading = document.querySelector(`[data-screen="${activeStep}"] h3`);
+      title.textContent = heading.textContent;
+      back.disabled = activeStep === 1;
+      next.textContent = activeStep === totalSteps ? "Save preferences" : "Continue";
+      if (activeStep === totalSteps) updateSummary();
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
+    }
+
+    next.addEventListener("click", () => {
+      if (activeStep < totalSteps) {
+        activeStep += 1;
+        renderStep();
+      } else {
+        updateSummary();
+        document.getElementById("saved-message").textContent = "Preferences saved. You can change them anytime in Settings → Privacy.";
+        next.textContent = "Saved";
+        next.disabled = true;
+      }
+    });
+    back.addEventListener("click", () => { if (activeStep > 1) { activeStep -= 1; renderStep(); } });
+    document.querySelectorAll("input").forEach((input) => input.addEventListener("change", updateSummary));
+    document.getElementById("policy-button").addEventListener("click", () => window.open("https://docs.google.com/document/d/1NAJvMBBk1AWRwPACm8ZhC_k87OTsPnRa3vFn9HPzHyc/edit?tab=t.0", "_blank", "noopener"));
+  </script>
+</body>
+</html>
